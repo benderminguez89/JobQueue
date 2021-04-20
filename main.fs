@@ -4,6 +4,7 @@ let AssertEquality inputTuple =
   match inputTuple with
   |(a,b) when a=b -> printfn "Test Success"
   |_ -> printfn "Test Fail"
+
 (********************************************************************************************************************
 Step 1:
 Sample random number list: 3,4,6,1,9,2,5,6
@@ -29,23 +30,25 @@ Implement a Queue type that has enqueue and dequeue functions. You can reference
 
 type Queue = QueueContents of int list
 
-let enqueue x (QueueContents contents) =   
-    QueueContents (x::contents)
+let enqueue x (QueueContents contents)= 
+    QueueContents (contents@[x])
+     
 
 let dequeue (QueueContents contents) = 
     match contents with 
     |head::tail -> 
       let newQueue = QueueContents tail
-      (head  ,  newQueue)
-    |[] -> 
-        failwith "Job Queue is empty!"
+      (newQueue , head)
+    |[] -> failwith "Job Queue is empty!"
 
 let emptyQueue = QueueContents []
 let queueWith1test = enqueue 1 emptyQueue 
 let queueWith2test = enqueue 2 queueWith1test 
+let dequeueTest = dequeue queueWith2test
 
-AssertEquality (queueWith2test, QueueContents [2;1])
-
+AssertEquality (queueWith2test, QueueContents [1;2])
+printfn "%A" queueWith2test
+printfn "%A" dequeueTest
 
 (*******************************************************************************************************************
 Step 3:
@@ -67,3 +70,11 @@ Head=1, odd number, enqueue
 Head=9, even number, enqueue
 	->queue has 1,9 in it…
 *********************************************************************************************************************)
+let rec jobQueue jobNums currJobs= 
+    match jobNums with
+    |[] -> jobQueue
+    | head::tail when head%2=0 -> jobQueue tail (dequeue currJobs)
+    | head::tail when head%2=1 -> jobQueue tail (enqueue currJobs head)
+
+let Jobs = jobQueue jobList []
+printfn "%A" Jobs
