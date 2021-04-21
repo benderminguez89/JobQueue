@@ -33,12 +33,11 @@ type Queue = QueueContents of int list
 let enqueue x (QueueContents contents)= 
     QueueContents (contents@[x])
      
-
 let dequeue (QueueContents contents) = 
     match contents with 
     |head::tail -> 
       let newQueue = QueueContents tail
-      (newQueue , head)
+      (head, newQueue)
     |[] -> failwith "Job Queue is empty!"
 
 let emptyQueue = QueueContents []
@@ -73,8 +72,8 @@ Head=9, even number, enqueue
 let rec jobQueue jobNums currJobs= 
     match jobNums with
     |[] -> jobQueue
-    | head::tail when head%2=0 -> jobQueue tail (dequeue currJobs)
-    | head::tail when head%2=1 -> jobQueue tail (enqueue currJobs head)
+    | head::tail when head%2=1 enqueue head currJobs -> jobQueue tail 
+    | head::tail when head%2=0 dequeue currJobs-> jobQueue tail 
 
-let Jobs = jobQueue jobList []
-printfn "%A" Jobs
+let jobs = jobQueue jobList []
+printfn "%A" jobs
